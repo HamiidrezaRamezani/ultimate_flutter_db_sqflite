@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:ultimate_flutter_db_sqflite/hafez/pages/effects_screen.dart';
 import 'package:ultimate_flutter_db_sqflite/pages/home_page.dart';
 
 import 'models/products_model.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const HomePage(),
+      home: const EffectScreen(),
     );
   }
 
