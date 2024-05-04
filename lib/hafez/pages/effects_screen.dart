@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:ultimate_flutter_db_sqflite/hafez/pages/bookmark_items_screen.dart';
+import 'package:ultimate_flutter_db_sqflite/hafez/pages/effects_items_screen.dart';
 
 import '../db/db_effect_service.dart';
 import '../model/effect_model.dart';
@@ -29,6 +31,19 @@ class _EffectScreenState extends State<EffectScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.yellow,
+          title: Text('حافظ'),
+          leading: IconButton(
+            icon: Icon(Icons.bookmark),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BookMarkItemsScreen()));
+            },
+          ),
+        ),
         body: (effectsItems.isEmpty)
             ? CircularProgressIndicator()
             : ListView.builder(
@@ -36,9 +51,24 @@ class _EffectScreenState extends State<EffectScreen> {
                 itemBuilder: (BuildContext context, int index) {
                   return Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      effectsItems[index].title,
-                      style: TextStyle(fontSize: 25),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => EffectsItemsScreen(
+                                      slugUrl: effectsItems[index].slugUrl,
+                                    )));
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            effectsItems[index].title,
+                            style: TextStyle(fontSize: 25),
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 }));
@@ -72,23 +102,19 @@ class _EffectScreenState extends State<EffectScreen> {
   }
 
   bool getDataFromDB() {
-      var future = dbEffectService.getEffect();
-      future.then((value) {
-        for (var element in value) {
-          effectsItems.add(EffectModel(
-              id: element.id, title: element.title, slugUrl: element.slugUrl));
-          print('${element.id}  121212121');
-        }
-        if (value.isEmpty)
-          getDataFromServer();
+    var future = dbEffectService.getEffect();
+    future.then((value) {
+      for (var element in value) {
+        effectsItems.add(EffectModel(
+            id: element.id, title: element.title, slugUrl: element.slugUrl));
+        print('${element.id}  121212121');
+      }
+      if (value.isEmpty) getDataFromServer();
 
-        if (effectsItems.isNotEmpty) {
-          setState(() {
-
-          });
-        }
-
-      });
+      if (effectsItems.isNotEmpty) {
+        setState(() {});
+      }
+    });
 
     return effectsItems.isEmpty;
   }
