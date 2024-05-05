@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:ultimate_flutter_db_sqflite/hafez/model/effect_model.dart';
-import 'package:ultimate_flutter_db_sqflite/hafez/db/db_effect_helper.dart';
+import 'package:ultimate_flutter_db_sqflite/hafez/db/effect/db_effect_helper.dart';
 
 class DBEffectService {
   Future<List<EffectModel>> getEffect() async {

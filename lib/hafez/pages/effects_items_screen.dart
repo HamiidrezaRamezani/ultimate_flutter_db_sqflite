@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:ultimate_flutter_db_sqflite/hafez/db/effect_items/db_effect_items_service.dart';
 import 'package:ultimate_flutter_db_sqflite/hafez/pages/effects_items_poems_screen.dart';
 import '../model/effects_items_model.dart';
 import 'bookmark_items_screen.dart';
@@ -17,9 +18,12 @@ class EffectsItemsScreen extends StatefulWidget {
 class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
   List<EffectsItemsModel> effectsItemsList = [];
 
+  late DBEffectsItemsService dbEffectsItemsService;
+
   @override
   void initState() {
-    getDataFromServer();
+    dbEffectsItemsService = DBEffectsItemsService();
+    getDataFromDB();
     super.initState();
   }
 
@@ -32,10 +36,8 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
         leading: IconButton(
           icon: Icon(Icons.bookmark),
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => BookMarkItemsScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => BookMarkItemsScreen()));
           },
         ),
       ),
@@ -54,7 +56,8 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => EffectsItemsPoemsScreen(
-                                    effectsItemId: effectsItemsList[index].id.toString(),
+                                    effectsItemId:
+                                        effectsItemsList[index].id.toString(),
                                   )));
                     },
                     child: Card(
@@ -111,16 +114,38 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
       print(result['poetOrCat']['cat']['poems']);
 
       result['poetOrCat']['cat']['poems'].forEach((element) {
-        var effect = EffectsItemsModel(
+        var effectItems = EffectsItemsModel(
             id: element['id'],
             title: element['title'],
             urlSlug: element['urlSlug'],
             excerpt: element['excerpt']);
-        effectsItemsList.add(effect);
-        // dbEffectService.addEffects(effect);
+        effectsItemsList.add(effectItems);
+        dbEffectsItemsService.addEffectsItems(effectItems);
+        print(effectItems.title);
       });
     } else {
       print('Request failed with status: ${response.statusCode}.');
     }
+  }
+
+  bool getDataFromDB() {
+    var future = dbEffectsItemsService.getEffectsItems();
+    future.then((value) {
+      for (var element in value) {
+        effectsItemsList.add(EffectsItemsModel(
+            id: element.id,
+            title: element.title,
+            urlSlug: element.urlSlug,
+            excerpt: element.excerpt));
+        print('${element.id}  121212121');
+      }
+      if (value.isEmpty) getDataFromServer();
+
+      if (effectsItemsList.isNotEmpty) {
+        setState(() {});
+      }
+    });
+
+    return effectsItemsList.isEmpty;
   }
 }

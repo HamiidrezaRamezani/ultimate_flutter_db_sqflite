@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:ultimate_flutter_db_sqflite/hafez/pages/bookmark_items_screen.dart';
 import 'package:ultimate_flutter_db_sqflite/hafez/pages/effects_items_screen.dart';
 
-import '../db/db_effect_service.dart';
+import '../db/effect/db_effect_service.dart';
 import '../model/effect_model.dart';
 
 class EffectScreen extends StatefulWidget {
@@ -25,7 +25,6 @@ class _EffectScreenState extends State<EffectScreen> {
     super.initState();
     dbEffectService = DBEffectService();
     getDataFromDB();
-    // getDataFromServer();
   }
 
   @override
