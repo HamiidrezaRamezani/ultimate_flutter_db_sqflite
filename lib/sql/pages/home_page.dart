@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:snippet_coder_utils/FormHelper.dart';
 import 'package:snippet_coder_utils/list_helper.dart';
-import 'package:ultimate_flutter_db_sqflite/pages/add_edit_product.dart';
-import 'package:ultimate_flutter_db_sqflite/services/db_service.dart';
+import 'package:ultimate_flutter_db_sqflite/sql/pages/add_edit_product.dart';
+import 'package:ultimate_flutter_db_sqflite/sql/services/db_service.dart';
 
 import '../models/products_model.dart';
 

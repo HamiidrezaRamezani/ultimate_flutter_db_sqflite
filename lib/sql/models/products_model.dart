@@ -1,4 +1,4 @@
-import 'package:ultimate_flutter_db_sqflite/models/model.dart';
+import 'package:ultimate_flutter_db_sqflite/sql/models/model.dart';
 
 class ProductModel extends Model {
   static String table = "products";

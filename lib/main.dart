@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:ultimate_flutter_db_sqflite/hafez/pages/effects_screen.dart';
-import 'package:ultimate_flutter_db_sqflite/pages/home_page.dart';
-
-import 'models/products_model.dart';
 
 void main() {
   runApp(const MyApp());

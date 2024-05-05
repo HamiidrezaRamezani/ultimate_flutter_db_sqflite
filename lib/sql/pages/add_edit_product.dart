@@ -4,8 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:snippet_coder_utils/FormHelper.dart';
-import 'package:ultimate_flutter_db_sqflite/models/products_model.dart';
-import 'package:ultimate_flutter_db_sqflite/services/db_service.dart';
+import 'package:ultimate_flutter_db_sqflite/sql/models/products_model.dart';
+import 'package:ultimate_flutter_db_sqflite/sql/services/db_service.dart';
 
 class AddEditProductPage extends StatefulWidget {
   final ProductModel? model;

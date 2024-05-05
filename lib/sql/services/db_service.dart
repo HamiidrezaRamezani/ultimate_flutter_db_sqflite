@@ -1,5 +1,5 @@
-import 'package:ultimate_flutter_db_sqflite/models/products_model.dart';
-import 'package:ultimate_flutter_db_sqflite/utils/db_helper.dart';
+import 'package:ultimate_flutter_db_sqflite/sql/models/products_model.dart';
+import 'package:ultimate_flutter_db_sqflite/sql/utils/db_helper.dart';
 
 class DBService {
   Future<List<ProductModel>> getProducts() async {
