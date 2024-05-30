@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:sqflite/sqflite.dart';
 import 'package:ultimate_flutter_db_sqflite/hafez/pages/bookmark_items_screen.dart';
 import 'package:ultimate_flutter_db_sqflite/hafez/pages/effects_items_screen.dart';
 
@@ -19,6 +20,7 @@ class _EffectScreenState extends State<EffectScreen> {
   List<EffectModel> effectsItems = [];
 
   late DBEffectService dbEffectService;
+  static Database? _db;
 
   @override
   void initState() {

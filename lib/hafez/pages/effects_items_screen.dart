@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:ultimate_flutter_db_sqflite/hafez/db/effect_items/db_effect_items_service.dart';
+import 'package:ultimate_flutter_db_sqflite/hafez/db/effect/db_effect_service.dart';
 import 'package:ultimate_flutter_db_sqflite/hafez/pages/effects_items_poems_screen.dart';
 import '../model/effects_items_model.dart';
 import 'bookmark_items_screen.dart';
@@ -18,11 +18,11 @@ class EffectsItemsScreen extends StatefulWidget {
 class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
   List<EffectsItemsModel> effectsItemsList = [];
 
-  late DBEffectsItemsService dbEffectsItemsService;
+  late DBEffectService dbEffectService;
 
   @override
   void initState() {
-    dbEffectsItemsService = DBEffectsItemsService();
+    dbEffectService = DBEffectService();
     getDataFromDB();
     super.initState();
   }
@@ -98,6 +98,7 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
   }
 
   getDataFromServer() async {
+
     print('get data from server');
     effectsItemsList.clear();
     var url = Uri.parse(
@@ -120,7 +121,7 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
             urlSlug: element['urlSlug'],
             excerpt: element['excerpt']);
         effectsItemsList.add(effectItems);
-        dbEffectsItemsService.addEffectsItems(effectItems);
+        dbEffectService.addEffectsItems(effectItems);
         print(effectItems.title);
       });
     } else {
@@ -129,7 +130,7 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
   }
 
   bool getDataFromDB() {
-    var future = dbEffectsItemsService.getEffectsItems();
+    var future = dbEffectService.getEffectsItems();
     future.then((value) {
       for (var element in value) {
         effectsItemsList.add(EffectsItemsModel(
