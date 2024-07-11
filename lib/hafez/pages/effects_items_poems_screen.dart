@@ -2,14 +2,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:ultimate_flutter_db_sqflite/hafez/model/effects_items_model.dart';
 import '../db/effect/db_effect_service.dart';
 import '../model/effects_items_verse_model.dart';
 import 'bookmark_items_screen.dart';
 
 class EffectsItemsPoemsScreen extends StatefulWidget {
-  final int effectsItemId;
+  final EffectsItemsModel effectsItemsModel;
 
-  const EffectsItemsPoemsScreen({Key? key, required this.effectsItemId})
+  const EffectsItemsPoemsScreen({Key? key, required this.effectsItemsModel})
       : super(key: key);
 
   @override
@@ -20,7 +21,6 @@ class EffectsItemsPoemsScreen extends StatefulWidget {
 class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
   List<EffectsItemsVerseModel> effectsItemsVerseList = [];
   late DBEffectService dbEffectService;
-  bool isBookMark = false;
 
   @override
   void initState() {
@@ -37,9 +37,17 @@ class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
         title: Text('حافظ'),
         leading: IconButton(
           icon: Icon(Icons.bookmark),
-          onPressed: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => BookMarkItemsScreen()));
+          onPressed: () async {
+            // نویگیت به صفحه دوم و انتظار برای نتیجه
+
+            final result = await Navigator.push(context,
+                MaterialPageRoute(builder: (context) => BookMarkItemsScreen(effectsItemsModel: widget.effectsItemsModel,)));
+
+            if (result != null && result == 'refresh') {
+              setState(() {
+
+              });
+            }
           },
         ),
       ),
@@ -75,10 +83,13 @@ class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
             IconButton(
                 onPressed: () {
                   setState(() {
-                    isBookMark = !isBookMark;
+                    widget.effectsItemsModel.favorite =
+                        widget.effectsItemsModel.favorite == 0 ? 1 : 0;
+                    dbEffectService.updateFavorite(
+                        "effectsItems", widget.effectsItemsModel);
                   });
                 },
-                icon: Icon((isBookMark == true)
+                icon: Icon((widget.effectsItemsModel.favorite == 1)
                     ? Icons.bookmark
                     : Icons.bookmark_border))
           ],
@@ -90,7 +101,7 @@ class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
   getDataFromServer() async {
     effectsItemsVerseList.clear();
     var url = Uri.parse(
-        'https://api.ganjoor.net/api/ganjoor/poem/${widget.effectsItemId.toString()}?catInfo=false&catPoems=false&comments=false&rhymes=false&recitations=false&images=false&songs=false&relatedpoems=false');
+        'https://api.ganjoor.net/api/ganjoor/poem/${widget.effectsItemsModel.effectItemId.toString()}?catInfo=false&catPoems=false&comments=false&rhymes=false&recitations=false&images=false&songs=false&relatedpoems=false');
 
     var response = await http.get(url);
 
@@ -102,7 +113,7 @@ class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
 
       result['verses'].forEach((element) {
         var effect = EffectsItemsVerseModel(
-            effectsItemId: widget.effectsItemId,
+            effectsItemId: widget.effectsItemsModel.effectItemId,
             text: element['text'],
             coupletSummary: element['coupletSummary']);
         effectsItemsVerseList.add(effect);
@@ -114,7 +125,8 @@ class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
   }
 
   bool getDataFromDB() {
-    var future = dbEffectService.getEffectsItemsVerse(widget.effectsItemId);
+    var future = dbEffectService
+        .getEffectsItemsVerse(widget.effectsItemsModel.effectItemId);
     future.then((value) {
       for (var element in value) {
         effectsItemsVerseList.add(EffectsItemsVerseModel(

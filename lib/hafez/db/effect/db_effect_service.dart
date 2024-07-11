@@ -15,10 +15,10 @@ class DBEffectService {
         .toList();
   }
 
-  Future<List<EffectsItemsModel>> getEffectsItems(String slugUrl) async {
+  Future<List<EffectsItemsModel>> getEffectsItems(String column, String value) async {
     await DBEffectHelper.init();
     List<Map<String, dynamic>> effectsItems =
-        await DBEffectHelper.customQuery("effectsItems", "urlSlug", [slugUrl]);
+        await DBEffectHelper.customQuery("effectsItems", column, [value]);
 
     return effectsItems
         .map((item) => EffectsItemsModel(
@@ -26,6 +26,7 @@ class DBEffectService {
             effectItemId: item['effectItemsId'],
             title: item['title'],
             urlSlug: item['urlSlug'],
+            favorite: item['favorite'],
             excerpt: item['excerpt']))
         .toList();
   }
@@ -66,13 +67,13 @@ class DBEffectService {
   }
 
 
-// Future<bool> updateProduct(EffectModel model) async {
-//   await DBEffectHelper.init();
-//
-//   int ret = await DBEffectHelper.update(EffectModel.table, model);
-//
-//   return ret > 0 ? true : false;
-// }
+Future<bool> updateFavorite(String table, EffectsItemsModel effectsItemsModel) async {
+  await DBEffectHelper.init();
+
+  int ret = await DBEffectHelper.update(table, effectsItemsModel);
+
+  return ret > 0 ? true : false;
+}
 //
 // Future<bool> deleteProduct(EffectModel model) async {
 //   await DBEffectHelper.init();

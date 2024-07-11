@@ -57,8 +57,8 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => EffectsItemsPoemsScreen(
-                                    effectsItemId:
-                                        effectsItemsList[index].effectItemId,
+                                    effectsItemsModel:
+                                        effectsItemsList[index],
                                   )));
                     },
                     child: Card(
@@ -127,7 +127,7 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
   }
 
   bool getDataFromDB() {
-    var future = dbEffectService.getEffectsItems(widget.slugUrl);
+    var future = dbEffectService.getEffectsItems("urlSlug", widget.slugUrl);
     future.then((value) {
       for (var element in value) {
         effectsItemsList.add(EffectsItemsModel(
@@ -135,6 +135,7 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
             title: element.title,
             effectItemId: element.effectItemId,
             urlSlug: element.urlSlug,
+            favorite: element.favorite,
             excerpt: element.excerpt));
       }
       if (value.isEmpty) getDataFromServer();

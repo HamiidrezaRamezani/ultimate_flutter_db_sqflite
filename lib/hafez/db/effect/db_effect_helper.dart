@@ -31,7 +31,7 @@ abstract class DBEffectHelper {
         'CREATE TABLE effects (id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, effectId INTEGER, slugUrl STRING)';
     await db.execute(sqlQuery);
     String sqlEffectsItems =
-        'CREATE TABLE effectsItems (id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, effectItemsId INTEGER, urlSlug STRING, excerpt STRING)';
+        'CREATE TABLE effectsItems (id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, effectItemsId INTEGER, urlSlug STRING, excerpt STRING, favorite INTEGER)';
     await db.execute(sqlEffectsItems);
     String sqlEffectsItemsVerse =
         'CREATE TABLE effectsItemsVerse (id INTEGER PRIMARY KEY AUTOINCREMENT, effectItemsId INTEGER, text STRING, coupletSummary STRING)';
@@ -65,7 +65,8 @@ abstract class DBEffectHelper {
       'effectItemsId': model.effectItemId,
       'title': model.title,
       'urlSlug': model.urlSlug,
-      'excerpt': model.excerpt
+      'excerpt': model.excerpt,
+      'favorite': model.favorite
     };
     return await _db!.insert(table, map);
   }
@@ -80,12 +81,12 @@ abstract class DBEffectHelper {
   }
 
   //
-  // static Future<int> update(String table, Model model) async {
-  //   return await _db!
-  //       .update(table, model.toJson(), where: 'id = ?', whereArgs: [model.id]);
-  // }
-  //
-  // static Future<int> delete(String table, Model model) async {
-  //   return await _db!.delete(table, where: 'id = ?', whereArgs: [model.id]);
-  // }
+  static Future<int> update(String table, EffectsItemsModel effectsItemsModel) async {
+    Map<String, dynamic> map = {
+      'favorite': effectsItemsModel.favorite,
+    };
+    return await _db!
+        .update(table, map, where: 'effectItemsId = ?', whereArgs: [effectsItemsModel.effectItemId]);
+  }
+
 }
