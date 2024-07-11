@@ -4,6 +4,8 @@ import 'package:path/path.dart' as p;
 import 'package:ultimate_flutter_db_sqflite/hafez/model/effect_model.dart';
 import 'package:ultimate_flutter_db_sqflite/hafez/model/effects_items_model.dart';
 
+import '../../model/effects_items_verse_model.dart';
+
 
 abstract class DBEffectHelper {
   static Database? _db;
@@ -31,6 +33,10 @@ abstract class DBEffectHelper {
     String sqlEffectsItems =
         'CREATE TABLE effectsItems (id INTEGER PRIMARY KEY AUTOINCREMENT, title STRING, effectItemsId INTEGER, urlSlug STRING, excerpt STRING)';
     await db.execute(sqlEffectsItems);
+    String sqlEffectsItemsVerse =
+        'CREATE TABLE effectsItemsVerse (id INTEGER PRIMARY KEY AUTOINCREMENT, effectItemsId INTEGER, text STRING, coupletSummary STRING)';
+    await db.execute(sqlEffectsItemsVerse);
+
   }
 
   static void onUpgrade(Database db, int oldVersion, int version) async {
@@ -56,10 +62,19 @@ abstract class DBEffectHelper {
 
   static Future<int> insertEffectsItem(String table, EffectsItemsModel model) async {
     Map<String, dynamic> map = {
-      'effectItemsId': model.id,
+      'effectItemsId': model.effectItemId,
       'title': model.title,
       'urlSlug': model.urlSlug,
       'excerpt': model.excerpt
+    };
+    return await _db!.insert(table, map);
+  }
+
+  static Future<int> insertEffectsItemVerse(String table, EffectsItemsVerseModel model) async {
+    Map<String, dynamic> map = {
+      'effectItemsId': model.effectsItemId,
+      'text': model.text,
+      'coupletSummary': model.coupletSummary,
     };
     return await _db!.insert(table, map);
   }

@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import '../model/effects_items_poems_model.dart';
+import '../db/effect/db_effect_service.dart';
+import '../model/effects_items_verse_model.dart';
 import 'bookmark_items_screen.dart';
 
 class EffectsItemsPoemsScreen extends StatefulWidget {
-  final String effectsItemId;
+  final int effectsItemId;
 
   const EffectsItemsPoemsScreen({Key? key, required this.effectsItemId})
       : super(key: key);
@@ -17,13 +18,14 @@ class EffectsItemsPoemsScreen extends StatefulWidget {
 }
 
 class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
-  List<EffectsItemsPoemsModel> effectsItemsPoemsList = [];
-
+  List<EffectsItemsVerseModel> effectsItemsVerseList = [];
+  late DBEffectService dbEffectService;
   bool isBookMark = false;
 
   @override
   void initState() {
-    getDataFromServer();
+    dbEffectService = DBEffectService();
+    getDataFromDB();
     super.initState();
   }
 
@@ -36,31 +38,28 @@ class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
         leading: IconButton(
           icon: Icon(Icons.bookmark),
           onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => BookMarkItemsScreen()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => BookMarkItemsScreen()));
           },
         ),
       ),
-      body: (effectsItemsPoemsList.isEmpty)
+      body: (effectsItemsVerseList.isEmpty)
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : Padding(
               padding: const EdgeInsets.only(bottom: 50),
               child: ListView.builder(
-                  itemCount: effectsItemsPoemsList.length,
+                  itemCount: effectsItemsVerseList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return Container(
-                      alignment:
-                          (effectsItemsPoemsList[index].versePosition % 2 == 0)
-                              ? Alignment.centerLeft
-                              : Alignment.centerRight,
+                      alignment: (index % 2 == 0)
+                          ? Alignment.centerLeft
+                          : Alignment.centerRight,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          effectsItemsPoemsList[index].text,
+                          effectsItemsVerseList[index].text,
                           style: TextStyle(fontSize: 18.0),
                         ),
                       ),
@@ -89,10 +88,9 @@ class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
   }
 
   getDataFromServer() async {
-    print('get data from server');
-    effectsItemsPoemsList.clear();
+    effectsItemsVerseList.clear();
     var url = Uri.parse(
-        'https://api.ganjoor.net/api/ganjoor/poem/${widget.effectsItemId}?catInfo=false&catPoems=false&comments=false&rhymes=false&recitations=false&images=false&songs=false&relatedpoems=false');
+        'https://api.ganjoor.net/api/ganjoor/poem/${widget.effectsItemId.toString()}?catInfo=false&catPoems=false&comments=false&rhymes=false&recitations=false&images=false&songs=false&relatedpoems=false');
 
     var response = await http.get(url);
 
@@ -102,19 +100,36 @@ class _EffectsItemsPoemsScreenState extends State<EffectsItemsPoemsScreen> {
         result = jsonDecode(response.body);
       });
 
-      print(result['verses']);
-
       result['verses'].forEach((element) {
-        var effect = EffectsItemsPoemsModel(
-            id: element['id'],
-            versePosition: element['vOrder'],
+        var effect = EffectsItemsVerseModel(
+            effectsItemId: widget.effectsItemId,
             text: element['text'],
-            poemsSummary: element['coupletSummary']);
-        effectsItemsPoemsList.add(effect);
-        // dbEffectService.addEffects(effect);
+            coupletSummary: element['coupletSummary']);
+        effectsItemsVerseList.add(effect);
+        dbEffectService.addEffectsItemsVerse(effect);
       });
     } else {
       print('Request failed with status: ${response.statusCode}.');
     }
+  }
+
+  bool getDataFromDB() {
+    var future = dbEffectService.getEffectsItemsVerse(widget.effectsItemId);
+    future.then((value) {
+      for (var element in value) {
+        effectsItemsVerseList.add(EffectsItemsVerseModel(
+            id: element.id,
+            effectsItemId: element.effectsItemId,
+            coupletSummary: element.coupletSummary,
+            text: element.text));
+      }
+      if (value.isEmpty) getDataFromServer();
+
+      if (effectsItemsVerseList.isNotEmpty) {
+        setState(() {});
+      }
+    });
+
+    return effectsItemsVerseList.isEmpty;
   }
 }

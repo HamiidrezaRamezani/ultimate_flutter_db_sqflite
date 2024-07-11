@@ -52,12 +52,13 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: () {
+
                       Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => EffectsItemsPoemsScreen(
                                     effectsItemId:
-                                        effectsItemsList[index].id.toString(),
+                                        effectsItemsList[index].effectItemId,
                                   )));
                     },
                     child: Card(
@@ -114,9 +115,9 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
 
       result['poetOrCat']['cat']['poems'].forEach((element) {
         var effectItems = EffectsItemsModel(
-            id: element['id'],
             title: element['title'],
             urlSlug: widget.slugUrl,
+            effectItemId: element['id'],
             excerpt: element['excerpt']);
         effectsItemsList.add(effectItems);
         dbEffectService.addEffectsItems(effectItems);
@@ -132,6 +133,7 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
         effectsItemsList.add(EffectsItemsModel(
             id: element.id,
             title: element.title,
+            effectItemId: element.effectItemId,
             urlSlug: element.urlSlug,
             excerpt: element.excerpt));
       }
