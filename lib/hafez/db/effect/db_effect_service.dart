@@ -19,10 +19,10 @@ class DBEffectService {
 
   }
 
-  Future<List<EffectsItemsModel>> getEffectsItems() async {
+  Future<List<EffectsItemsModel>> getEffectsItems(String slugUrl) async {
     await DBEffectHelper.init();
     List<Map<String, dynamic>> effectsItems =
-    await DBEffectHelper.query("effectsItems");
+    await DBEffectHelper.customQuery("effectsItems", "urlSlug", [slugUrl]);
 
     return effectsItems.map((item) => EffectsItemsModel(
         id: item['id'],

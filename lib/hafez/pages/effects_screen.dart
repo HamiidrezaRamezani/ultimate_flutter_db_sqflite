@@ -96,7 +96,6 @@ class _EffectScreenState extends State<EffectScreen> {
         effectsItems.add(effect);
         dbEffectService.addEffects(effect);
       });
-      print(result['cat']['children']);
     } else {
       print('Request failed with status: ${response.statusCode}.');
     }
@@ -108,7 +107,6 @@ class _EffectScreenState extends State<EffectScreen> {
       for (var element in value) {
         effectsItems.add(EffectModel(
             id: element.id, title: element.title, slugUrl: element.slugUrl));
-        print('${element.id}  121212121');
       }
       if (value.isEmpty) getDataFromServer();
 

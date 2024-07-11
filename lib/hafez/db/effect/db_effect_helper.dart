@@ -41,6 +41,10 @@ abstract class DBEffectHelper {
     return _db!.query(table);
   }
 
+  static Future<List<Map<String, dynamic>>> customQuery(String table, String column, [List<Object?>? arguments]) async {
+    return _db!.rawQuery("SELECT * FROM $table WHERE $column = ?", arguments);
+  }
+
   static Future<int> insertEffects(String table, EffectModel model) async {
     Map<String, dynamic> map = {
       'effectId': model.id,

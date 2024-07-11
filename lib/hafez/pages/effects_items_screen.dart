@@ -99,7 +99,6 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
 
   getDataFromServer() async {
 
-    print('get data from server');
     effectsItemsList.clear();
     var url = Uri.parse(
         'https://api.ganjoor.net/api/ganjoor/page?url=%2Fhafez%2F${widget.slugUrl}&catPoems=true');
@@ -112,25 +111,22 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
         result = jsonDecode(response.body);
       });
 
-      print(result['poetOrCat']['cat']['poems']);
 
       result['poetOrCat']['cat']['poems'].forEach((element) {
         var effectItems = EffectsItemsModel(
             id: element['id'],
             title: element['title'],
-            urlSlug: element['urlSlug'],
+            urlSlug: widget.slugUrl,
             excerpt: element['excerpt']);
         effectsItemsList.add(effectItems);
         dbEffectService.addEffectsItems(effectItems);
-        print(effectItems.title);
       });
     } else {
-      print('Request failed with status: ${response.statusCode}.');
     }
   }
 
   bool getDataFromDB() {
-    var future = dbEffectService.getEffectsItems();
+    var future = dbEffectService.getEffectsItems(widget.slugUrl);
     future.then((value) {
       for (var element in value) {
         effectsItemsList.add(EffectsItemsModel(
@@ -138,7 +134,6 @@ class _EffectsItemsScreenState extends State<EffectsItemsScreen> {
             title: element.title,
             urlSlug: element.urlSlug,
             excerpt: element.excerpt));
-        print('${element.id}  121212121');
       }
       if (value.isEmpty) getDataFromServer();
 
